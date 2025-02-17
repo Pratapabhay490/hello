@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Medical Subjects Directory</title>
+    <style>
+        :root {
+            --primary-color: #2196f3;
+            --bg-color: #f5f5f5;
+            --card-bg: #ffffff;
+            --hover-color: #e3f2fd;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: var(--bg-color);
+            line-height: 1.6;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background-color: var(--card-bg);
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .header h1 {
+            color: var(--primary-color);
+            margin-bottom: 20px;
+        }
+
+        .search-box {
+            width: 100%;
+            max-width: 500px;
+            margin: 0 auto;
+            padding: 10px 20px;
+            border: 2px solid var(--primary-color);
+            border-radius: 25px;
+            font-size: 16px;
+            outline: none;
+        }
+
+        .search-box:focus {
+            box-shadow: 0 0 5px rgba(33, 150, 243, 0.3);
+        }
+
+        .category {
+            background-color: var(--card-bg);
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+
+        .category-header {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 15px 20px;
+        }
+
+        .subjects-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 15px;
+            padding: 20px;
+        }
+
+        .subject {
+            background-color: var(--bg-color);
+            padding: 15px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .subject:hover {
+            background-color: var(--hover-color);
+            transform: translateY(-2px);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        @media (max-width: 768px) {
+            .subjects-grid {
+                grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            }
+            
+            .container {
+                padding: 10px;
+            }
+        }
+
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Medical Subjects Directory</h1>
+            <input type="text" class="search-box" placeholder="Search medical subjects..." id="searchInput">
+        </div>
+        <div id="categoriesContainer"></div>
+    </div>
+
+    <script>
+        const medicalSubjects = {
+            'Basic Sciences': [
+                'Anatomy',
+                'Physiology',
+                'Biochemistry',
+                'Histology',
+                'Embryology',
+                'Microbiology',
+                'Immunology',
+                'Pathology',
+                'Pharmacology'
+            ],
+            'Clinical Sciences': [
+                'Internal Medicine',
+                'Surgery',
+                'Pediatrics',
+                'Obstetrics & Gynecology',
+                'Psychiatry',
+                'Dermatology',
+                'Ophthalmology',
+                'Otorhinolaryngology',
+                'Orthopedics'
+            ],
+            'Diagnostic Sciences': [
+                'Radiology',
+                'Laboratory Medicine',
+                'Nuclear Medicine',
+                'Clinical Pathology',
+                'Medical Imaging'
+            ],
+            'Public Health': [
+                'Epidemiology',
+                'Biostatistics',
+                'Environmental Health',
+                'Health Policy',
+                'Community Medicine'
+            ],
+            'Specialties': [
+                'Cardiology',
+                'Neurology',
+                'Endocrinology',
+                'Gastroenterology',
+                'Nephrology',
+                'Pulmonology',
+                'Hematology',
+                'Oncology',
+                'Rheumatology'
+            ]
+        };
+
+        function createSubjectsHTML() {
+            const container = document.getElementById('categoriesContainer');
+            container.innerHTML = '';
+
+            Object.entries(medicalSubjects).forEach(([category, subjects]) => {
+                const categoryDiv = document.createElement('div');
+                categoryDiv.className = 'category';
+                categoryDiv.innerHTML = `
+                    <div class="category-header">
+                        <h2>${category}</h2>
+                    </div>
+                    <div class="subjects-grid">
+                        ${subjects.map(subject => `
+                            <div class="subject" data-subject="${subject.toLowerCase()}">
+                                ${subject}
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+                container.appendChild(categoryDiv);
+            });
+        }
+
+        function filterSubjects(searchTerm) {
+            const subjects = document.querySelectorAll('.subject');
+            const categories = document.querySelectorAll('.category');
+            
+            categories.forEach(category => {
+                let hasVisibleSubjects = false;
+                const subjectsInCategory = category.querySelectorAll('.subject');
+                
+                subjectsInCategory.forEach(subject => {
+                    const matches = subject.textContent.toLowerCase().includes(searchTerm.toLowerCase());
+                    subject.classList.toggle('hidden', !matches);
+                    if (matches) hasVisibleSubjects = true;
+                });
+                
+                category.classList.toggle('hidden', !hasVisibleSubjects);
+            });
+        }
+
+        // Initialize the page
+        document.addEventListener('DOMContentLoaded', () => {
+            createSubjectsHTML();
+            
+            const searchInput = document.getElementById('searchInput');
+            searchInput.addEventListener('input', (e) => {
+                filterSubjects(e.target.value);
+            });
+        });
+    </script>
+</body>
+</html>
